@@ -1,0 +1,10 @@
+{# 공통 UI 조각. 사용자 기능이 생기면 name만 넘기면 됩니다. #}
+
+{% macro avatar(name='user') -%}
+  <span class="avatar"><span>{{ name[0] | upper }}</span></span>
+{%- endmacro %}
+
+{% macro author(name='user') -%}
+  {{ avatar(name) }}
+  <span class="username">{{ name }}</span>
+{%- endmacro %}

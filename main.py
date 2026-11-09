@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Request, Depends, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import create_engine, select, func, ForeignKey
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session, relationship, selectinload
 from datetime import datetime
 
 DB_URL = 'postgresql+psycopg://sd4:sd4@localhost:5432/insta_practice'
@@ -21,7 +22,8 @@ class Post(Base):
   # created_at: Mapped[datetime]
   comments: Mapped[list['Comment']] = relationship(
     back_populates='post',
-    cascade='all, delete-orphan'
+    cascade='all, delete-orphan',
+    order_by='Comment.created_at.desc()'
   )
 
 class Comment(Base):
@@ -36,6 +38,7 @@ class Comment(Base):
 
 
 app = FastAPI()
+app.mount('/static', StaticFiles(directory='static'), name='static')
 templates = Jinja2Templates(directory='templates')
 
 def get_db():
@@ -62,7 +65,11 @@ def post_list(request: Request, db: Session = Depends(get_db)):
   # with Session(engine) as db:
   
   # posts = db.scalars(select(Post)).all()
-  posts = db.scalars(select(Post).order_by(Post.created_at.desc())).all()
+  posts = db.scalars(
+    select(Post)
+    .options(selectinload(Post.comments))  # 댓글을 한 번에 불러와 N+1 쿼리 방지
+    .order_by(Post.created_at.desc())
+  ).all()
   return templates.TemplateResponse(
     request=request,
     name='list.html',
@@ -146,6 +153,11 @@ def comment_create(
 @app.post('/posts/{post_id}/comments/{comment_id}/delete')
 def comment_delete(post_id: int, comment_id: int, db: Session = Depends(get_db)):
   comment = db.get(Comment, comment_id)
+
+  # 이미 지워졌거나 다른 게시물의 댓글이면 404
+  if comment is None or comment.post_id != post_id:
+    raise HTTPException(status_code=404, detail='해당 댓글이 없습니다.')
+
   db.delete(comment)
   db.commit()
 

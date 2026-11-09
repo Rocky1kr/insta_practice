@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from '_macros.html' import author %}
 
 {% block title %}전체게시물{% endblock %}
 
@@ -8,14 +9,13 @@
   {% for post in posts %}
     <article class="card">
       <div class="card-header">
-        <div class="avatar"><span>U</span></div>
-        <span class="username">user</span>
+        {{ author() }}
         <span class="dot">•</span>
         <span class="time">{{ post.created_at.strftime('%m월 %d일') }}</span>
       </div>
 
       <a href="/posts/{{ post.id }}">
-        <div class="tile tile-{{ post.id % 5 }}">{{ post.content | truncate(120) }}</div>
+        <div class="tile tile-{{ post.id % 5 }}"><span class="tile-text">{{ post.content }}</span></div>
       </a>
 
       <div class="card-body">

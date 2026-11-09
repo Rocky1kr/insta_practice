@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from '_macros.html' import author, avatar %}
 
 {% block title %}상세보기{% endblock %}
 
@@ -7,8 +8,7 @@
 
   <article class="card">
     <div class="card-header">
-      <div class="avatar"><span>U</span></div>
-      <span class="username">user</span>
+      {{ author() }}
       <span class="dot">•</span>
       <span class="time">{{ post.created_at.strftime('%m월 %d일') }}</span>
       <span class="spacer"></span>
@@ -18,14 +18,15 @@
         </summary>
         <div class="menu">
           <a href="/posts/{{ post.id }}/edit">수정하기</a>
-          <form action="/posts/{{ post.id }}/delete" method="post">
+          <form action="/posts/{{ post.id }}/delete" method="post"
+                onsubmit="return confirm('게시물과 댓글이 모두 삭제됩니다. 삭제할까요?')">
             <button type="submit" class="danger">삭제하기</button>
           </form>
         </div>
       </details>
     </div>
 
-    <div class="tile tile-{{ post.id % 5 }}">{{ post.content }}</div>
+    <div class="tile tile-{{ post.id % 5 }}"><span class="tile-text">{{ post.content }}</span></div>
 
     <div class="card-body">
       <p class="caption"><span class="username">user</span>{{ post.content }}</p>
@@ -33,9 +34,10 @@
     </div>
 
     <div class="comments">
-      {% for comment in post.comments | sort(attribute='created_at', reverse=True) %}
+      {# 최신순 정렬은 Post.comments 관계(order_by)에서 처리 #}
+      {% for comment in post.comments %}
         <div class="comment">
-          <div class="avatar"><span>U</span></div>
+          {{ avatar() }}
           <div class="comment-main">
             <p class="comment-text"><span class="username">user</span>{{ comment.content }}</p>
             <div class="comment-meta">
