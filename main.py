@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, select, func, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session, relationship
 from datetime import datetime
 
-DB_URL = 'postgresql+psycopg://sd4:sd4@localhost:5432/insta'
+DB_URL = 'postgresql+psycopg://sd4:sd4@localhost:5432/insta_practice'
 engine = create_engine(DB_URL, echo=True)
 
 # 모델 정의
