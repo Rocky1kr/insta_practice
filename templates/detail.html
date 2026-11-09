@@ -1,32 +1,60 @@
 {% extends 'base.html' %}
 
-{% block title %} 상세보기 {% endblock %}
+{% block title %}상세보기{% endblock %}
 
 
 {% block content %}
 
-  <p>{{ post.content }}</p>
+  <article class="card">
+    <div class="card-header">
+      <div class="avatar"><span>U</span></div>
+      <span class="username">user</span>
+      <span class="dot">•</span>
+      <span class="time">{{ post.created_at.strftime('%m월 %d일') }}</span>
+      <span class="spacer"></span>
+      <details class="more">
+        <summary aria-label="더보기">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+        </summary>
+        <div class="menu">
+          <a href="/posts/{{ post.id }}/edit">수정하기</a>
+          <form action="/posts/{{ post.id }}/delete" method="post">
+            <button type="submit" class="danger">삭제하기</button>
+          </form>
+        </div>
+      </details>
+    </div>
 
-  <a href="/posts/{{ post.id }}/edit">수정하기</a>
-  <form action="/posts/{{ post.id }}/delete" method="post">
-    <input type="submit" value="삭제하기">
-  </form>
+    <div class="tile tile-{{ post.id % 5 }}">{{ post.content }}</div>
 
-  <hr>
+    <div class="card-body">
+      <p class="caption"><span class="username">user</span>{{ post.content }}</p>
+      <p class="stamp">{{ post.created_at.strftime('%Y.%m.%d %H:%M') }}</p>
+    </div>
 
-  <form action="/posts/{{ post.id }}/comments/create" method="post">
-    <input type="text" name="content">
-    <input type="submit" value="댓글등록">
-  </form>
-  
-  {% for comment in post.comments | sort(attribute='created_at', reverse=True) %}
-    <p>{{ comment.content }}</p>
-    <small>{{ comment.created_at.strftime('%H:%M') }}</small>
-    <form action="/posts/{{ post.id }}/comments/{{ comment.id }}/delete" method="post">
-        <input type="submit" value="del">
+    <div class="comments">
+      {% for comment in post.comments | sort(attribute='created_at', reverse=True) %}
+        <div class="comment">
+          <div class="avatar"><span>U</span></div>
+          <div class="comment-main">
+            <p class="comment-text"><span class="username">user</span>{{ comment.content }}</p>
+            <div class="comment-meta">
+              <span>{{ comment.created_at.strftime('%H:%M') }}</span>
+              <form action="/posts/{{ post.id }}/comments/{{ comment.id }}/delete" method="post">
+                <button type="submit" class="text-btn">삭제</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <p class="empty">첫 댓글을 달아주세요</p>
+      {% endfor %}
+    </div>
+
+    <form class="comment-form" action="/posts/{{ post.id }}/comments/create" method="post">
+      <input type="text" name="content" placeholder="댓글 달기..." autocomplete="off" required>
+      <button type="submit" class="post-btn">게시</button>
     </form>
-    {% else %}
-    <p>첫 댓글을 달아주세요</p>
-  {% endfor %}
+  </article>
 
 {% endblock %}

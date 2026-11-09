@@ -1,16 +1,45 @@
 {% extends 'base.html' %}
 
-{% block title %} 전체게시물 {% endblock %}
+{% block title %}전체게시물{% endblock %}
 
 <!-- content영역에 들어갈 코드 -->
 {% block content %}
 
-  <h1>전체게시물</h1>
   {% for post in posts %}
-    <p>{{ post.content }}</p>
-    <small>댓글 {{ post.comments | length }}개</small>
-    <small>{{ post.created_at.strftime('%Y%m%d %H:%M') }}</small>
-        <a href="/posts/{{post.id}}">자세히</a>
+    <article class="card">
+      <div class="card-header">
+        <div class="avatar"><span>U</span></div>
+        <span class="username">user</span>
+        <span class="dot">•</span>
+        <span class="time">{{ post.created_at.strftime('%m월 %d일') }}</span>
+      </div>
+
+      <a href="/posts/{{ post.id }}">
+        <div class="tile tile-{{ post.id % 5 }}">{{ post.content | truncate(120) }}</div>
+      </a>
+
+      <div class="card-body">
+        <div class="actions">
+          <a href="/posts/{{ post.id }}" aria-label="댓글">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.7 16.5A9 9 0 1 0 17 20.2L21 21z"/></svg>
+          </a>
+        </div>
+        <p class="caption"><span class="username">user</span>{{ post.content | truncate(80) }}</p>
+        {% if post.comments %}
+          <a href="/posts/{{ post.id }}" class="muted-link">댓글 {{ post.comments | length }}개 모두 보기</a>
+        {% else %}
+          <a href="/posts/{{ post.id }}" class="muted-link">댓글 달기...</a>
+        {% endif %}
+        <p class="stamp">{{ post.created_at.strftime('%Y.%m.%d %H:%M') }}</p>
+      </div>
+    </article>
+  {% else %}
+    <div class="empty-feed">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg>
+      <h2>아직 게시물이 없어요</h2>
+      <p>첫 번째 게시물을 공유해 보세요.</p>
+      <a href="/posts/new" class="primary-btn">새 게시물 만들기</a>
+    </div>
   {% endfor %}
 
 {% endblock %}

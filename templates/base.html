@@ -1,19 +1,208 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title%} insta {% endblock %}</title>
+    <title>{% block title %}insta{% endblock %} · insta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fafafa;
+            --card: #ffffff;
+            --border: #dbdbdb;
+            --text: #262626;
+            --muted: #8e8e8e;
+            --link: #0095f6;
+            --link-hover: #1877f2;
+            --danger: #ed4956;
+            --ring: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #000000;
+                --card: #000000;
+                --border: #363636;
+                --text: #f5f5f5;
+                --muted: #a8a8a8;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+        a { color: inherit; text-decoration: none; }
+        button, input, textarea { font: inherit; color: inherit; }
+
+        /* 상단 바 */
+        .topbar {
+            position: sticky; top: 0; z-index: 10;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+        }
+        .topbar-inner {
+            max-width: 470px; margin: 0 auto;
+            height: 60px; padding: 0 16px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { font-family: 'Lobster', cursive; font-size: 28px; }
+        .topbar-icons { display: flex; gap: 20px; }
+        .icon { width: 24px; height: 24px; display: block; }
+
+        /* 레이아웃 */
+        main { max-width: 470px; margin: 0 auto; padding: 24px 0 64px; }
+        .page-title { font-size: 16px; font-weight: 700; padding: 0 16px 16px; }
+
+        /* 게시물 카드 */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        @media (max-width: 500px) {
+            main { padding-top: 0; }
+            .card { border-radius: 0; border-left: 0; border-right: 0; margin-bottom: 12px; }
+        }
+        .card-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px;
+        }
+        .avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--ring); padding: 2px; flex-shrink: 0;
+        }
+        .avatar span {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100%; border-radius: 50%;
+            background: var(--card); border: 2px solid var(--card);
+            font-weight: 700; font-size: 13px;
+        }
+        .username { font-weight: 700; }
+        .dot { color: var(--muted); }
+        .time { color: var(--muted); }
+        .card-header .spacer { flex: 1; }
+
+        /* 텍스트 게시물을 정사각형 이미지처럼 */
+        .tile {
+            aspect-ratio: 1 / 1;
+            display: flex; align-items: center; justify-content: center;
+            padding: 40px; text-align: center;
+            color: #fff; font-size: 22px; font-weight: 700;
+            word-break: break-word; white-space: pre-wrap;
+            overflow: hidden;
+        }
+        .tile-0 { background: linear-gradient(135deg, #f58529, #dd2a7b); }
+        .tile-1 { background: linear-gradient(135deg, #8134af, #515bd4); }
+        .tile-2 { background: linear-gradient(135deg, #00c6ff, #0072ff); }
+        .tile-3 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .tile-4 { background: linear-gradient(135deg, #fc466b, #3f5efb); }
+
+        .card-body { padding: 10px 14px 14px; }
+        .actions { display: flex; gap: 16px; padding-bottom: 8px; }
+        .caption { margin-bottom: 6px; white-space: pre-wrap; word-break: break-word; }
+        .caption .username { margin-right: 6px; }
+        .muted-link { color: var(--muted); display: inline-block; margin-bottom: 4px; }
+        .stamp { color: var(--muted); font-size: 11px; letter-spacing: .2px; text-transform: uppercase; }
+
+        /* 더보기 메뉴 (수정/삭제) */
+        .more { position: relative; }
+        .more summary { list-style: none; cursor: pointer; padding: 4px; }
+        .more summary::-webkit-details-marker { display: none; }
+        .menu {
+            position: absolute; right: 0; top: 32px; z-index: 5;
+            min-width: 140px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,.12);
+            overflow: hidden;
+        }
+        .menu a, .menu button {
+            display: block; width: 100%;
+            padding: 12px 16px; text-align: center;
+            background: none; border: 0; cursor: pointer;
+        }
+        .menu > * + * { border-top: 1px solid var(--border); }
+        .menu .danger { color: var(--danger); font-weight: 700; }
+
+        /* 댓글 */
+        .comments { border-top: 1px solid var(--border); padding: 12px 14px; }
+        .comment { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; }
+        .comment .avatar { width: 28px; height: 28px; }
+        .comment .avatar span { font-size: 11px; }
+        .comment-main { flex: 1; min-width: 0; }
+        .comment-text { word-break: break-word; }
+        .comment-text .username { margin-right: 6px; }
+        .comment-meta { display: flex; gap: 12px; align-items: center; color: var(--muted); font-size: 12px; margin-top: 2px; }
+        .text-btn {
+            background: none; border: 0; padding: 0; cursor: pointer;
+            color: var(--muted); font-size: 12px; font-weight: 500;
+        }
+        .text-btn:hover { color: var(--danger); }
+        .empty { color: var(--muted); text-align: center; padding: 16px 0; }
+
+        .comment-form {
+            display: flex; align-items: center; gap: 12px;
+            border-top: 1px solid var(--border);
+            padding: 10px 14px;
+        }
+        .comment-form input[type=text] {
+            flex: 1; border: 0; outline: none; background: transparent; padding: 6px 0;
+        }
+        .post-btn {
+            background: none; border: 0; cursor: pointer;
+            color: var(--link); font-weight: 700;
+        }
+        .post-btn:hover { color: var(--link-hover); }
+
+        /* 작성/수정 폼 */
+        .compose-header {
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding: 12px 14px;
+        }
+        .compose-header h1 { font-size: 16px; font-weight: 700; }
+        .compose textarea {
+            display: block; width: 100%; min-height: 220px; resize: vertical;
+            border: 0; outline: none; background: transparent;
+            padding: 14px; font-size: 15px;
+        }
+
+        /* 빈 피드 */
+        .empty-feed { text-align: center; padding: 64px 16px; }
+        .empty-feed h2 { font-size: 22px; margin: 16px 0 8px; }
+        .empty-feed p { color: var(--muted); margin-bottom: 20px; }
+        .primary-btn {
+            display: inline-block; background: var(--link); color: #fff;
+            border-radius: 8px; padding: 8px 16px; font-weight: 700;
+        }
+        .primary-btn:hover { background: var(--link-hover); }
+    </style>
 </head>
 <body>
-    <nav>
-        <a href="/posts">insta</a>
-        <a href="/posts/new">새글</a>
-
-    </nav>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="/posts" class="logo">insta</a>
+            <nav class="topbar-icons">
+                <a href="/posts" aria-label="홈">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/></svg>
+                </a>
+                <a href="/posts/new" aria-label="새 게시물">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg>
+                </a>
+            </nav>
+        </div>
+    </header>
     <main>
-        {% block content %} {% endblock %}
-
+        {% block content %}{% endblock %}
     </main>
 </body>
 </html>
