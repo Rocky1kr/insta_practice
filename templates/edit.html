@@ -11,7 +11,7 @@
             <h1>정보 수정</h1>
             <button type="submit" class="post-btn">완료</button>
         </div>
-        <div class="card-header">{{ author() }}</div>
+        <div class="card-header">{{ author(user.username) }}</div>
         <textarea name="content" id="content" aria-label="문구" required autofocus>{{post.content}}</textarea>
     </form>
 {% endblock %}

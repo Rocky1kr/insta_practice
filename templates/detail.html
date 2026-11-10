@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from '_macros.html' import author, avatar %}
+{% from '_macros.html' import author %}
 
 {% block title %}상세보기{% endblock %}
 
@@ -8,38 +8,40 @@
 
   <article class="card">
     <div class="card-header">
-      {{ author() }}
+      {{ author(post.user.username) }}
       <span class="dot">•</span>
       <span class="time">{{ post.created_at.strftime('%m월 %d일') }}</span>
       <span class="spacer"></span>
-      <details class="more">
-        <summary aria-label="더보기">
-          <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
-        </summary>
-        <div class="menu">
-          <a href="/posts/{{ post.id }}/edit">수정하기</a>
-          <form action="/posts/{{ post.id }}/delete" method="post"
-                onsubmit="return confirm('게시물과 댓글이 모두 삭제됩니다. 삭제할까요?')">
-            <button type="submit" class="danger">삭제하기</button>
-          </form>
-        </div>
-      </details>
+      <!-- 로그인 유저와 글 작성자가 일치할때 -->
+      {% if user and user.id == post.user_id %}
+        <details class="more">
+          <summary aria-label="더보기">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+          </summary>
+          <div class="menu">
+            <a href="/posts/{{ post.id }}/edit">수정하기</a>
+            <form action="/posts/{{ post.id }}/delete" method="post"
+                  onsubmit="return confirm('게시물과 댓글이 모두 삭제됩니다. 삭제할까요?')">
+              <button type="submit" class="danger">삭제하기</button>
+            </form>
+          </div>
+        </details>
+      {% endif %}
     </div>
 
     <div class="tile tile-{{ post.id % 5 }}"><span class="tile-text">{{ post.content }}</span></div>
 
     <div class="card-body">
-      <p class="caption"><span class="username">user</span>{{ post.content }}</p>
+      <p class="caption"><span class="username">{{ post.user.username }}</span>{{ post.content }}</p>
       <p class="stamp">{{ post.created_at.strftime('%Y.%m.%d %H:%M') }}</p>
     </div>
 
     <div class="comments">
-      {# 최신순 정렬은 Post.comments 관계(order_by)에서 처리 #}
+      {# 최신순 정렬은 Post.comments 관계(order_by)에서 처리. 댓글에는 작성자 정보가 없음 #}
       {% for comment in post.comments %}
         <div class="comment">
-          {{ avatar() }}
           <div class="comment-main">
-            <p class="comment-text"><span class="username">user</span>{{ comment.content }}</p>
+            <p class="comment-text">{{ comment.content }}</p>
             <div class="comment-meta">
               <span>{{ comment.created_at.strftime('%H:%M') }}</span>
               <form action="/posts/{{ post.id }}/comments/{{ comment.id }}/delete" method="post">

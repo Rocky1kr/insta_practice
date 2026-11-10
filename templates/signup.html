@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}회원가입{% endblock %}
+
+{% block content %}
+
+  <div class="auth">
+    <div class="auth-box">
+      <span class="logo">insta</span>
+      <p class="auth-desc">친구들의 사진과 글을 보려면 가입하세요.</p>
+
+      <form action="/signup" method="post">
+        <input type="text" id="username" name="username" placeholder="아이디" aria-label="아이디"
+               value="{{ username or '' }}" autocomplete="username" required autofocus>
+        <input type="password" id="password" name="password" placeholder="비밀번호" aria-label="비밀번호"
+               autocomplete="new-password" required>
+        <button type="submit" class="auth-submit">가입</button>
+      </form>
+
+      {% if error %}
+        <p class="auth-error">{{ error }}</p>
+      {% endif %}
+    </div>
+
+    <div class="auth-switch">
+      계정이 있으신가요? <a href="/login">로그인</a>
+    </div>
+  </div>
+
+{% endblock %}

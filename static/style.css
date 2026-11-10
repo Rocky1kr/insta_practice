@@ -42,7 +42,18 @@ button, input, textarea { font: inherit; color: inherit; }
     display: flex; align-items: center; justify-content: space-between;
 }
 .logo { font-family: 'Lobster', cursive; font-size: 28px; }
-.topbar-icons { display: flex; gap: 20px; }
+.topbar-icons { display: flex; align-items: center; gap: 20px; }
+.topbar-user { display: flex; align-items: center; gap: 8px; }
+.topbar-user .avatar { width: 28px; height: 28px; }
+.topbar-user .avatar span { font-size: 11px; }
+.topbar-icons form { display: flex; }
+.nav-btn {
+    background: none; border: 0; cursor: pointer; padding: 0;
+    font-weight: 700; color: var(--link);
+}
+.nav-btn:hover { color: var(--link-hover); }
+.nav-btn.muted { color: var(--text); font-weight: 500; }
+.primary-btn.small-btn { padding: 6px 14px; font-size: 14px; }
 .icon { width: 24px; height: 24px; display: block; }
 
 /* 레이아웃 */
@@ -184,3 +195,43 @@ main { max-width: 470px; margin: 0 auto; padding: 24px 0 64px; }
     border-radius: 8px; padding: 8px 16px; font-weight: 700;
 }
 .primary-btn:hover { background: var(--link-hover); }
+
+/* 로그인 / 회원가입 */
+.auth { max-width: 350px; margin: 24px auto 0; padding: 0 16px; }
+.auth-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 40px 40px 24px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.auth-box .logo { display: block; font-size: 44px; margin-bottom: 12px; }
+.auth-desc { color: var(--muted); font-weight: 700; font-size: 16px; margin-bottom: 20px; }
+.auth-box input {
+    display: block; width: 100%;
+    margin-bottom: 6px; padding: 9px 8px;
+    font-size: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    outline: none;
+}
+.auth-box input:focus { border-color: var(--muted); }
+.auth-submit {
+    display: block; width: 100%; margin-top: 12px;
+    background: var(--link); color: #fff;
+    border: 0; border-radius: 8px; padding: 8px;
+    font-weight: 700; cursor: pointer;
+}
+.auth-submit:hover { background: var(--link-hover); }
+.auth-error { color: var(--danger); font-size: 14px; margin-top: 16px; }
+.auth-switch {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px; text-align: center;
+}
+.auth-switch a { color: var(--link); font-weight: 700; }
+@media (max-width: 450px) {
+    .auth { padding: 0; }
+    .auth-box, .auth-switch { border: 0; }
+}

@@ -11,7 +11,7 @@
             <h1>새 게시물 만들기</h1>
             <button type="submit" class="post-btn">공유하기</button>
         </div>
-        <div class="card-header">{{ author() }}</div>
+        <div class="card-header">{{ author(user.username) }}</div>
         <textarea name="content" id="content" aria-label="문구" placeholder="문구를 입력하세요..." required autofocus></textarea>
     </form>
 {% endblock %}
