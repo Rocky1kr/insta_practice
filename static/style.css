@@ -235,3 +235,54 @@ main { max-width: 470px; margin: 0 auto; padding: 24px 0 64px; }
     .auth { padding: 0; }
     .auth-box, .auth-switch { border: 0; }
 }
+
+/* 작성자 링크 */
+.author { display: flex; align-items: center; gap: 10px; }
+a.username:hover { opacity: .7; }
+
+/* 좋아요 / 댓글 아이콘 버튼 */
+.actions form { display: flex; }
+.icon-btn {
+    display: flex; background: none; border: 0; padding: 0; cursor: pointer; color: var(--text);
+}
+.icon-btn:hover { opacity: .6; }
+.icon-btn.liked { color: var(--danger); }
+.icon-btn.liked:hover { opacity: 1; }
+.likes-count { font-weight: 700; margin-bottom: 4px; }
+.comment > a { flex-shrink: 0; }
+.login-hint { color: var(--muted); }
+.login-hint a { color: var(--link); font-weight: 700; }
+
+/* 프로필 */
+.profile {
+    display: flex; align-items: center; gap: 28px;
+    padding: 8px 16px 28px;
+}
+.profile-avatar { width: 88px; height: 88px; padding: 3px; }
+.profile-avatar span { font-size: 34px; border-width: 3px; }
+.profile-info { flex: 1; min-width: 0; }
+.profile-top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.profile-name { font-size: 20px; font-weight: 500; word-break: break-all; }
+.profile-top .primary-btn, .secondary-btn { border: 0; cursor: pointer; padding: 7px 16px; }
+.secondary-btn {
+    display: inline-block; border-radius: 8px; font-weight: 700;
+    background: var(--border); color: var(--text);
+}
+.secondary-btn:hover { opacity: .8; }
+.profile-stats { display: flex; gap: 28px; list-style: none; }
+.profile-stats b { font-weight: 700; margin-left: 2px; }
+.profile-tab {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    border-top: 1px solid var(--border);
+    padding: 14px 0; margin-bottom: 4px;
+    font-size: 12px; font-weight: 700; letter-spacing: 1px;
+}
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.grid-item.tile { padding: 12px; font-size: 13px; }
+.grid-item .tile-text { -webkit-line-clamp: 4; line-clamp: 4; }
+.grid-item:hover { opacity: .85; }
+@media (max-width: 500px) {
+    .profile { gap: 18px; }
+    .profile-avatar { width: 72px; height: 72px; }
+    .profile-stats { gap: 16px; font-size: 13px; }
+}

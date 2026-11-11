@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ owner.username }}{% endblock %}
+
+{% block content %}
+
+  <section class="profile">
+    <span class="avatar profile-avatar"><span>{{ owner.username[0] | upper }}</span></span>
+
+    <div class="profile-info">
+      <div class="profile-top">
+        <h1 class="profile-name">{{ owner.username }}</h1>
+        <!-- 내가 내 자신을 팔로우 할 수 없도록 -->
+        {% if not user or user.id != owner.id %}
+          <form action="/users/{{ owner.username }}/follows" method="post">
+            {% if is_following %}
+              <button type="submit" class="secondary-btn">팔로잉</button>
+            {% else %}
+              <button type="submit" class="primary-btn">팔로우</button>
+            {% endif %}
+          </form>
+        {% endif %}
+      </div>
+
+      <ul class="profile-stats">
+        <li>게시물 <b>{{ posts | length }}</b></li>
+        <li>팔로워 <b>{{ follower_count }}</b></li>
+        <li>팔로잉 <b>{{ following_count }}</b></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="profile-tab">
+    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+    게시물
+  </div>
+
+  {% if posts %}
+    <div class="grid">
+      {% for post in posts %}
+        <a href="/posts/{{ post.id }}" class="grid-item tile tile-{{ post.id % 5 }}">
+          <span class="tile-text">{{ post.content }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-feed">
+      <h2>게시물 없음</h2>
+    </div>
+  {% endif %}
+
+{% endblock %}

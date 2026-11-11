@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from '_macros.html' import author %}
+{% from '_macros.html' import author, like_button, comment_icon %}
 
 {% block title %}전체게시물{% endblock %}
 
@@ -7,7 +7,7 @@
 {% block content %}
 
   {% for post in posts %}
-    <article class="card">
+    <article class="card" id="post-{{ post.id }}">
       <div class="card-header">
         {{ author(post.user.username) }}
         <span class="dot">•</span>
@@ -20,14 +20,14 @@
 
       <div class="card-body">
         <div class="actions">
-          <a href="/posts/{{ post.id }}" aria-label="댓글">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.7 16.5A9 9 0 1 0 17 20.2L21 21z"/></svg>
-          </a>
+          {{ like_button(post, post.id in liked_ids, '/posts#post-' ~ post.id) }}
+          {{ comment_icon(post) }}
         </div>
-        <p class="caption"><span class="username">{{ post.user.username }}</span>{{ post.content | truncate(80) }}</p>
+        <p class="likes-count">좋아요 {{ post.likes | length }}개</p>
+        <p class="caption"><a href="/users/{{ post.user.username }}" class="username">{{ post.user.username }}</a>{{ post.content | truncate(80) }}</p>
         {% if post.comments %}
           <a href="/posts/{{ post.id }}" class="muted-link">댓글 {{ post.comments | length }}개 모두 보기</a>
-        {% else %}
+        {% elif user %}
           <a href="/posts/{{ post.id }}" class="muted-link">댓글 달기...</a>
         {% endif %}
         <p class="stamp">{{ post.created_at.strftime('%Y.%m.%d %H:%M') }}</p>

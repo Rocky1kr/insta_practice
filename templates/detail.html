@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from '_macros.html' import author %}
+{% from '_macros.html' import author, avatar, like_button %}
 
 {% block title %}상세보기{% endblock %}
 
@@ -32,33 +32,45 @@
     <div class="tile tile-{{ post.id % 5 }}"><span class="tile-text">{{ post.content }}</span></div>
 
     <div class="card-body">
-      <p class="caption"><span class="username">{{ post.user.username }}</span>{{ post.content }}</p>
+      <div class="actions">
+        {{ like_button(post, post.id in liked_ids, '/posts/' ~ post.id) }}
+      </div>
+      <p class="likes-count">좋아요 {{ post.likes | length }}개</p>
+      <p class="caption"><a href="/users/{{ post.user.username }}" class="username">{{ post.user.username }}</a>{{ post.content }}</p>
       <p class="stamp">{{ post.created_at.strftime('%Y.%m.%d %H:%M') }}</p>
     </div>
 
     <div class="comments">
-      {# 최신순 정렬은 Post.comments 관계(order_by)에서 처리. 댓글에는 작성자 정보가 없음 #}
+      {# 최신순 정렬은 Post.comments 관계(order_by)에서 처리 #}
       {% for comment in post.comments %}
         <div class="comment">
+          <a href="/users/{{ comment.user.username }}">{{ avatar(comment.user.username) }}</a>
           <div class="comment-main">
-            <p class="comment-text">{{ comment.content }}</p>
+            <p class="comment-text"><a href="/users/{{ comment.user.username }}" class="username">{{ comment.user.username }}</a>{{ comment.content }}</p>
             <div class="comment-meta">
               <span>{{ comment.created_at.strftime('%H:%M') }}</span>
-              <form action="/posts/{{ post.id }}/comments/{{ comment.id }}/delete" method="post">
-                <button type="submit" class="text-btn">삭제</button>
-              </form>
+              <!-- 내가 쓴 댓글만 삭제 가능 -->
+              {% if user and user.id == comment.user_id %}
+                <form action="/posts/{{ post.id }}/comments/{{ comment.id }}/delete" method="post">
+                  <button type="submit" class="text-btn">삭제</button>
+                </form>
+              {% endif %}
             </div>
           </div>
         </div>
       {% else %}
-        <p class="empty">첫 댓글을 달아주세요</p>
+        <p class="empty">아직 댓글이 없습니다.</p>
       {% endfor %}
     </div>
 
-    <form class="comment-form" action="/posts/{{ post.id }}/comments/create" method="post">
-      <input type="text" name="content" placeholder="댓글 달기..." autocomplete="off" required>
-      <button type="submit" class="post-btn">게시</button>
-    </form>
+    {% if user %}
+      <form class="comment-form" action="/posts/{{ post.id }}/comments/create" method="post">
+        <input type="text" name="content" placeholder="댓글 달기..." autocomplete="off" required>
+        <button type="submit" class="post-btn">게시</button>
+      </form>
+    {% else %}
+      <p class="comment-form login-hint"><a href="/login">로그인</a>하고 댓글을 남겨 보세요.</p>
+    {% endif %}
   </article>
 
 {% endblock %}

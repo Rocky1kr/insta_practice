@@ -1,10 +1,29 @@
-{# 공통 UI 조각. 사용자 기능이 생기면 name만 넘기면 됩니다. #}
+{# 공통 UI 조각 #}
 
-{% macro avatar(name='user') -%}
+{% macro avatar(name) -%}
   <span class="avatar"><span>{{ name[0] | upper }}</span></span>
 {%- endmacro %}
 
-{% macro author(name='user') -%}
-  {{ avatar(name) }}
-  <span class="username">{{ name }}</span>
+{# 아바타 + 아이디. 누르면 프로필로 이동 #}
+{% macro author(name) -%}
+  <a href="/users/{{ name }}" class="author">
+    {{ avatar(name) }}
+    <span class="username">{{ name }}</span>
+  </a>
+{%- endmacro %}
+
+{# 좋아요 버튼. next = 누른 뒤 돌아올 주소 #}
+{% macro like_button(post, liked, next) -%}
+  <form action="/posts/{{ post.id }}/likes" method="post">
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="icon-btn{% if liked %} liked{% endif %}" aria-label="{% if liked %}좋아요 취소{% else %}좋아요{% endif %}">
+      <svg class="icon" viewBox="0 0 24 24" fill="{% if liked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.5 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.4 0 5.5 3.3 4.3 6.6-1.8 4.8-9.3 9.4-9.3 9.4z"/></svg>
+    </button>
+  </form>
+{%- endmacro %}
+
+{% macro comment_icon(post) -%}
+  <a href="/posts/{{ post.id }}" class="icon-btn" aria-label="댓글">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.7 16.5A9 9 0 1 0 17 20.2L21 21z"/></svg>
+  </a>
 {%- endmacro %}
